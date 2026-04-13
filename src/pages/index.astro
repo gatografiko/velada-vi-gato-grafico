@@ -53,7 +53,7 @@ const portraitPos: Record<string, string> = {
 
       <!-- Bracket hexagonal -->
       <div class="bracket">
-        {bracketRows.map((row, i) => (
+        {bracketRows.map((row) => (
           <>
             <div class="bracket__row">
               {row.fighters.map(name => (
@@ -82,6 +82,51 @@ const portraitPos: Record<string, string> = {
           <img src="/españa.png" alt="España" class="fighter__flag" />
         </div>
       </section>
+
+      <!-- ══════════════════════════════════════════
+           MÓVIL: layout completo (oculto en escritorio)
+           ══════════════════════════════════════════ -->
+      <div class="mobile-layout">
+
+        <!-- Fighter principal -->
+        <div class="mobile-fighter">
+          <img src="/scorpion.png" alt="Pereira" class="mobile-fighter__img" />
+          <div class="mobile-fighter__info">
+            <h1 class="mobile-fighter__name">PEREIRA</h1>
+            <span class="mobile-fighter__record">2-4-11</span>
+            <img src="/españa.png" alt="España" class="mobile-fighter__flag" />
+          </div>
+        </div>
+
+        <!-- Bracket 2×2 -->
+        <div class="mobile-bracket">
+          <div class="mobile-bracket__row">
+            <div class="m-hex-wrap m-hex-wrap--active">
+              <div class="m-hex"></div>
+              <img src="/scorpion.png" alt="Pereira" class="m-hex__portrait" style="object-position: 50% 0%" />
+              <span class="m-hex__label">PEREIRA</span>
+            </div>
+            <div class="m-hex-wrap">
+              <div class="m-hex"></div>
+              <img src="/milena.png" alt="Alana" class="m-hex__portrait" style="object-position: 50% 0%" />
+              <span class="m-hex__label">ALANA</span>
+            </div>
+          </div>
+          <div class="mobile-bracket__row">
+            <div class="m-hex-wrap">
+              <div class="m-hex"></div>
+              <img src="/shadow.png" alt="Grefg" class="m-hex__portrait" style="object-position: 50% 0%" />
+              <span class="m-hex__label">GREFG</span>
+            </div>
+            <div class="m-hex-wrap">
+              <div class="m-hex"></div>
+              <img src="/shao-kan.png" alt="Ibai" class="m-hex__portrait" style="object-position: 50% 0%" />
+              <span class="m-hex__label">IBAI</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
 
     </main>
   </div>
@@ -256,5 +301,200 @@ const portraitPos: Record<string, string> = {
     text-align: center;
     line-height: 1;
     position: relative;
+  }
+
+  /* ══════════════════════════════════════════════
+     MÓVIL  (< 1024 px)
+     La vista escritorio se mantiene intacta en lg+
+     ══════════════════════════════════════════════ */
+
+  /* Ocultar layout móvil en escritorio */
+  .mobile-layout {
+    display: none;
+  }
+
+  @media (max-width: 1023px) {
+
+    /* Nav simplificado */
+    .nav {
+      padding: 0.75rem 1.25rem;
+    }
+    .nav__links {
+      display: none;
+    }
+
+    /* Arena: ocultar columnas escritorio, ceder espacio al layout móvil */
+    .arena {
+      display: block;
+      min-height: calc(100vh - 48px);
+      position: relative;
+    }
+
+    .fighter--left,
+    .fighter--right,
+    .bracket {
+      display: none;
+    }
+
+    /* ── Contenedor móvil principal ── */
+    .mobile-layout {
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 48px);
+    }
+
+    /* ── Sección fighter: ancho completo, altura fija ── */
+    .mobile-fighter {
+      flex: 0 0 70vh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Imagen a full-width, recortada desde arriba */
+    .mobile-fighter__img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+    }
+
+    /* Info pegada al borde inferior de la imagen */
+    .mobile-fighter__info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+      padding-bottom: 0.9rem;
+    }
+
+    .mobile-fighter__name {
+      font-size: clamp(4rem, 19vw, 6.5rem);
+      letter-spacing: 0.01em;
+      font-style: italic;
+      text-shadow:
+        0 0 80px #000,
+        0 0 30px #000,
+        0 0 10px #000,
+        3px 3px 0 rgba(0,0,0,0.8);
+    }
+
+    .mobile-fighter__record {
+      display: inline-block;
+      background: #f5c200;
+      color: #000;
+      font-size: 1.05rem;
+      letter-spacing: 0.12em;
+      text-align: center;
+      border-radius: 3px;
+      padding: 0.1rem 2rem;
+      margin-top: -1.4rem;
+    }
+
+    .mobile-fighter__flag {
+      width: 62px;
+      height: auto;
+      margin-top: 0.1rem;
+    }
+
+    /* ── Bracket 2×2: ocupa el espacio restante ── */
+    .mobile-bracket {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0 1rem;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.92) 25%);
+    }
+
+    /* Fila 1: PEREIRA + ALANA — centrados con separación amplia */
+    .mobile-bracket__row:first-child {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      margin-top: -15%;
+      gap: 9.5rem;
+      width: 100%;
+    }
+
+    /* Fila 2: GREFG + IBAI — centrada y más pequeña */
+    .mobile-bracket__row:last-child {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 3rem;
+    }
+
+    /* ── Hexágonos fila 1 (grandes) ── */
+    .m-hex-wrap {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      width: 120px;
+      padding-top: 10px;
+    }
+
+    .m-hex {
+      width: 120px;
+      height: 104px;
+      clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+      background: linear-gradient(90deg, #ffe500 0%, #e38000 48%);
+      rotate: 90deg;
+    }
+
+    /* Hexágono activo: rojo */
+    .m-hex-wrap--active .m-hex {
+      background: linear-gradient(90deg, #d41212 0%, #7a0000 55%);
+    }
+
+    .m-hex__portrait {
+      position: absolute;
+      top: -14%;
+      left: 50%;
+      transform: translateX(-50%);
+      height: 116%;
+      width: 100%;
+      object-fit: cover;
+      z-index: 2;
+    }
+
+    .m-hex__label {
+      margin-top: -1.8rem;
+      font-size: 1.15rem;
+      color: #fff;
+      font-style: italic;
+      text-shadow: 1px 1px 6px rgba(0,0,0,1);
+      text-align: center;
+      line-height: 1;
+      position: relative;
+      z-index: 3;
+    }
+
+    /* ── Hexágonos fila 2 (pequeños) ── */
+    .mobile-bracket__row:last-child .m-hex-wrap {
+      width: 88px;
+      padding-top: 7px;
+    }
+
+    .mobile-bracket__row:last-child .m-hex {
+      width: 88px;
+      height: 77px;
+    }
+
+    .mobile-bracket__row:last-child .m-hex__label {
+      font-size: 0.88rem;
+      margin-top: -1.3rem;
+    }
   }
 </style>
