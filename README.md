@@ -1,43 +1,80 @@
-# Astro Starter Kit: Minimal
+# La Velada VI — 2026
 
-```sh
-npm create astro@latest -- --template minimal
-```
+Fan-made website del evento de boxeo/streaming **La Velada del Año VI** de Ibai Llanos.
+Fecha: **Sábado 11 de julio de 2026 · Santiago Bernabéu, Madrid**.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Stack
 
-## 🚀 Project Structure
+| Tecnología | Versión |
+| :--------- | :------ |
+| [Astro](https://astro.build) | ^6.1.3 |
+| [Tailwind CSS](https://tailwindcss.com) | ^4.2.2 (via `@tailwindcss/vite`) |
+| [@astrojs/vercel](https://docs.astro.build/en/guides/deploy/vercel/) | ^10.0.4 (SSR adapter) |
+| Fuente | Bebas Neue (Google Fonts) |
 
-Inside of your Astro project, you'll see the following folders and files:
+## Estructura del proyecto
 
 ```text
 /
 ├── public/
+│   ├── background.avif        # Fondo global
+│   ├── fighters/              # Imágenes de luchadores (PNG)
+│   └── favicon.svg / .ico
 ├── src/
-│   └── pages/
-│       └── index.astro
+│   ├── layouts/
+│   │   └── Layout.astro       # Layout base (meta, fuente, estilos globales)
+│   ├── components/
+│   │   ├── SectionTitle.astro
+│   │   ├── header.astro
+│   │   ├── footer.astro
+│   │   ├── FighterAnimation.astro
+│   │   └── BoxerBigImages.astro
+│   ├── pages/
+│   │   ├── index.astro        # Página principal (arena + bracket hexagonal)
+│   │   ├── about.astro
+│   │   └── registro.astro
+│   ├── types/                 # Interfaces TypeScript (Fighters, Artists, Combat…)
+│   │   ├── fighters.ts
+│   │   ├── artists.ts
+│   │   ├── Combat.ts
+│   │   ├── sponsors.ts
+│   │   ├── social.ts
+│   │   └── bannerType.ts
+│   └── styles/
+│       └── global.css
+├── astro.config.mjs
 └── package.json
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Características implementadas
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+- **Arena principal** — layout de 3 columnas (fighter izquierda / bracket / fighter derecha) con imágenes a pantalla completa.
+- **Bracket hexagonal** — hexágonos con gradiente dorado → rojo al hacer hover + glow animado.
+- **Hover interactivo en luchadores** — al pasar el cursor sobre un hexágono se actualizan las imágenes laterales con transición de opacidad; en móvil se actualiza el fighter central.
+- **Responsive completo** — diseño diferenciado para escritorio (≥ 1024 px) y móvil (< 1024 px) con bracket 2×2 y fighter a pantalla completa.
+- **Tipos TypeScript** — interfaces definidas para fighters, artistas, combates, sponsors y redes sociales.
+- **Despliegue en Vercel** — adaptador SSR configurado.
 
-Any static assets, like images, can be placed in the `public/` directory.
+## Comandos
 
-## 🧞 Commands
+Ejecutar desde la raíz del proyecto:
 
-All commands are run from the root of the project, from a terminal:
+| Comando | Acción |
+| :------ | :----- |
+| `npm install` | Instala las dependencias |
+| `npm run dev` | Servidor de desarrollo en `localhost:4321` |
+| `npm run build` | Genera el sitio en `./dist/` |
+| `npm run preview` | Vista previa de la build antes de desplegar |
+| `npm run astro ...` | Comandos CLI de Astro |
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+## Despliegue
 
-## 👀 Want to learn more?
+El proyecto incluye el adaptador `@astrojs/vercel` para SSR. Para desplegar en Vercel basta con conectar el repositorio; la configuración ya está lista en `astro.config.mjs`.
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+## Roadmap
+
+- [ ] Content Collections para fighters, artistas y combates
+- [ ] React islands para componentes interactivos avanzados
+- [ ] Sección de artistas musicales
+- [ ] Página de registro/newsletter
+- [ ] Optimización para 100/100 Lighthouse
