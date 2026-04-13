@@ -57,7 +57,7 @@ const portraitPos: Record<string, string> = {
           <>
             <div class="bracket__row">
               {row.fighters.map(name => (
-                <div class="hex-wrap">
+                <div class="hex-wrap" data-fighter={name}>
                   <div class="hex"></div>
                   <img
                     src={fighterImage[name]}
@@ -101,24 +101,24 @@ const portraitPos: Record<string, string> = {
         <!-- Bracket 2×2 -->
         <div class="mobile-bracket">
           <div class="mobile-bracket__row">
-            <div class="m-hex-wrap m-hex-wrap--active">
+            <div class="m-hex-wrap m-hex-wrap--active" data-fighter="PEREIRA">
               <div class="m-hex"></div>
               <img src="/scorpion.png" alt="Pereira" class="m-hex__portrait" style="object-position: 50% 0%" />
               <span class="m-hex__label">PEREIRA</span>
             </div>
-            <div class="m-hex-wrap">
+            <div class="m-hex-wrap" data-fighter="ALANA">
               <div class="m-hex"></div>
               <img src="/milena.png" alt="Alana" class="m-hex__portrait" style="object-position: 50% 0%" />
               <span class="m-hex__label">ALANA</span>
             </div>
           </div>
           <div class="mobile-bracket__row">
-            <div class="m-hex-wrap">
+            <div class="m-hex-wrap" data-fighter="GREFG">
               <div class="m-hex"></div>
               <img src="/shadow.png" alt="Grefg" class="m-hex__portrait" style="object-position: 50% 0%" />
               <span class="m-hex__label">GREFG</span>
             </div>
-            <div class="m-hex-wrap">
+            <div class="m-hex-wrap" data-fighter="IBAI">
               <div class="m-hex"></div>
               <img src="/shao-kan.png" alt="Ibai" class="m-hex__portrait" style="object-position: 50% 0%" />
               <span class="m-hex__label">IBAI</span>
@@ -131,6 +131,72 @@ const portraitPos: Record<string, string> = {
     </main>
   </div>
 </Layout>
+
+<script>
+  const FIGHTERS: Record<string, { img: string; name: string }> = {
+    PEREIRA: { img: '/scorpion.png',  name: 'PEREIRA' },
+    IBAI:    { img: '/shao-kan.png',  name: 'IBAI'    },
+    GREFG:   { img: '/shadow.png',   name: 'GREFG'   },
+    ALANA:   { img: '/milena.png',   name: 'ALANA'   },
+  };
+
+  const ALL = Object.keys(FIGHTERS);
+
+  // Escritorio
+  const leftImg  = document.querySelector<HTMLImageElement>('.fighter--left  .fighter__img');
+  const rightImg = document.querySelector<HTMLImageElement>('.fighter--right .fighter__img');
+  const leftName  = document.querySelector<HTMLElement>('.fighter--left  .fighter__name');
+  const rightName = document.querySelector<HTMLElement>('.fighter--right .fighter__name');
+
+  // Móvil
+  const mobileImg  = document.querySelector<HTMLImageElement>('.mobile-fighter__img');
+  const mobileName = document.querySelector<HTMLElement>('.mobile-fighter__name');
+
+  const DEFAULT_LEFT  = 'PEREIRA';
+  const DEFAULT_RIGHT = 'IBAI';
+
+  function randomOther(exclude: string): string {
+    const pool = ALL.filter(f => f !== exclude);
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+
+  function applyFighter(img: HTMLImageElement | null, nameEl: HTMLElement | null, key: string) {
+    const data = FIGHTERS[key];
+    if (!data || !img) return;
+    img.style.opacity = '0';
+    setTimeout(() => {
+      img.src = data.img;
+      img.alt = data.name;
+      img.style.opacity = '1';
+    }, 150);
+    if (nameEl) nameEl.textContent = data.name;
+  }
+
+  const isMobile = () => window.innerWidth < 1024;
+
+  document.querySelectorAll<HTMLElement>('[data-fighter]').forEach(wrap => {
+    wrap.addEventListener('mouseenter', () => {
+      const fighter = wrap.dataset.fighter!;
+      const opponent = randomOther(fighter);
+
+      if (isMobile()) {
+        applyFighter(mobileImg, mobileName, fighter);
+      } else {
+        applyFighter(leftImg,  leftName,  fighter);
+        applyFighter(rightImg, rightName, opponent);
+      }
+    });
+
+    wrap.addEventListener('mouseleave', () => {
+      if (isMobile()) {
+        applyFighter(mobileImg, mobileName, DEFAULT_LEFT);
+      } else {
+        applyFighter(leftImg,  leftName,  DEFAULT_LEFT);
+        applyFighter(rightImg, rightName, DEFAULT_RIGHT);
+      }
+    });
+  });
+</script>
 
 <style>
   .page {
@@ -277,6 +343,45 @@ const portraitPos: Record<string, string> = {
     clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
     background: linear-gradient(90deg, #ffe500 0%, #e38000 48%);
     rotate: 90deg;
+    transition: background 0.25s ease;
+  }
+
+  /* Hex se vuelve rojo al hacer hover */
+  .hex-wrap:hover .hex {
+    background: linear-gradient(90deg, #d41212 0%, #7a0000 48%);
+  }
+
+  /* Capa de glow: detrás del hex, blur libre */
+  .hex-wrap {
+    cursor: pointer;
+  }
+
+  .hex-wrap::after {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 0;
+    width: 130px;
+    height: 114px;
+    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+    rotate: 90deg;
+    background: #d41212;
+    z-index: -1;
+    opacity: 0;
+    scale: 1.15;
+    filter: blur(10px);
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .hex-wrap:hover::after {
+    opacity: 1;
+  }
+
+  /* Las imágenes de los fighters NO interceptan eventos del bracket */
+  .fighter__img {
+    pointer-events: none;
+    transition: opacity 0.2s ease;
   }
 
   /* Retrato fuera del hex: cabeza y torso sobresalen por encima */
@@ -451,11 +556,56 @@ const portraitPos: Record<string, string> = {
       clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
       background: linear-gradient(90deg, #ffe500 0%, #e38000 48%);
       rotate: 90deg;
+      transition: background 0.25s ease;
     }
 
-    /* Hexágono activo: rojo */
+    /* Hexágono activo por defecto: rojo */
     .m-hex-wrap--active .m-hex {
-      background: linear-gradient(90deg, #d41212 0%, #7a0000 55%);
+      background: linear-gradient(90deg, #d41212 0%, #7a0000 48%);
+    }
+
+    /* Todos los hex se vuelven rojos al hacer hover */
+    .m-hex-wrap:hover .m-hex {
+      background: linear-gradient(90deg, #d41212 0%, #7a0000 48%);
+    }
+
+    /* Capa de glow para todos los m-hex-wrap */
+    .m-hex-wrap {
+      cursor: pointer;
+    }
+
+    .m-hex-wrap::after {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 0;
+      width: 120px;
+      height: 104px;
+      clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+      rotate: 90deg;
+      background: #d41212;
+      z-index: -1;
+      opacity: 0;
+      scale: 1.18;
+      filter: blur(10px);
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .m-hex-wrap:hover::after {
+      opacity: 1;
+    }
+
+    /* Ajuste del ::after para hexágonos pequeños (fila 2) */
+    .mobile-bracket__row:last-child .m-hex-wrap::after {
+      width: 88px;
+      height: 77px;
+      top: 7px;
+    }
+
+    /* Imagen del fighter central: transición suave al cambiar */
+    .mobile-fighter__img {
+      transition: opacity 0.2s ease;
     }
 
     .m-hex__portrait {
