@@ -1,17 +1,260 @@
 ---
+import Layout from '../layouts/Layout.astro';
 
+const bracketRows: { fighters: string[]; size: 1 | 2 | 3 }[] = [
+  { fighters: ['GREFG', 'ALANA', 'PEREIRA'], size: 1 },
+  { fighters: ['IBAI',  'GREFG'],             size: 1 },
+  { fighters: ['ALANA'],                       size: 1 },
+  { fighters: ['PEREIRA', 'IBAI'],             size: 1 },
+  { fighters: ['GREFG', 'ALANA', 'PEREIRA'], size: 1 },
+];
+
+const fighterImage: Record<string, string> = {
+  GREFG:   '/shadow.png',
+  ALANA:   '/milena.png',
+  PEREIRA: '/scorpion.png',
+  IBAI:    '/shao-kan.png',
+};
+
+// object-position ajustado por personaje para mostrar cabeza/torso
+const portraitPos: Record<string, string> = {
+  GREFG:   '50% 0%',
+  ALANA:   '50% 0%',
+  PEREIRA: '50% 0%',
+  IBAI:    '50% 0%',
+};
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout>
+  <div class="page">
+
+    <!-- ── Nav ───────────────────────────────────── -->
+    <nav class="nav">
+      <span class="nav__brand">LA VELADA 2026</span>
+      <ul class="nav__links">
+        <li>COMPETICIONES</li>
+        <li>PRONÓSTICOS</li>
+        <li>TIENDA OFICIAL</li>
+      </ul>
+    </nav>
+
+    <!-- ── Arena ─────────────────────────────────── -->
+    <main class="arena">
+
+      <!-- Fighter izquierda -->
+      <section class="fighter fighter--left">
+        <img src="/scorpion.png" alt="Pereira" class="fighter__img fighter__img--pereira" />
+        <div class="fighter__info fighter__info--left">
+          <h1 class="fighter__name">PEREIRA</h1>
+          <span class="fighter__record">2-4-11</span>
+          <img src="/españa.png" alt="España" class="fighter__flag" />
+        </div>
+      </section>
+
+      <!-- Bracket hexagonal -->
+      <div class="bracket">
+        {bracketRows.map((row, i) => (
+          <>
+            <div class="bracket__row">
+              {row.fighters.map(name => (
+                <div class="hex-wrap">
+                  <div class="hex"></div>
+                  <img
+                    src={fighterImage[name]}
+                    alt={name}
+                    class="hex__portrait"
+                    style={`object-position: ${portraitPos[name]}`}
+                  />
+                  <span class="hex__label">{name}</span>
+                </div>
+              ))}
+            </div>
+          </>
+        ))}
+      </div>
+
+      <!-- Fighter derecha -->
+      <section class="fighter fighter--right">
+        <img src="/shao-kan.png" alt="Ibai" class="fighter__img fighter__img--shao-kan" />
+        <div class="fighter__info fighter__info--right">
+          <h1 class="fighter__name">IBAI</h1>
+          <span class="fighter__record">2-4-11</span>
+          <img src="/españa.png" alt="España" class="fighter__flag" />
+        </div>
+      </section>
+
+    </main>
+  </div>
+</Layout>
+
+<style>
+  .page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+  }
+
+  /* ── Nav ─────────────────────────────────────── */
+  .nav {
+    display: flex;
+    align-items: center;
+    padding: 1rem 3rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .nav__brand { color: #f5c200; margin-right: auto; }
+  .nav__links {
+    display: flex;
+    gap: 3.5rem;
+    list-style: none;
+    opacity: 0.72;
+  }
+  .nav__links li { cursor: pointer; transition: color 0.2s, opacity 0.2s; }
+  .nav__links li:hover { opacity: 1; color: #f5c200; }
+
+  /* ── Arena ──────────────────────────────────── */
+  .arena {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 28% 44% 28%;
+    min-height: calc(100vh - 50px);
+    overflow: hidden;
+  }
+
+  /* ── Fighters ────────────────────────────────── */
+  .fighter {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    overflow: visible;
+  }
+
+  .fighter__img {
+    position: absolute;
+    bottom: 0;
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+    object-position: bottom;
+  }
+
+  /* Scorpion: desvanece borde derecho y parte superior */
+  .fighter__img--pereira {
+    left: 0px;
+  }
+
+  /* GrefG: volteado para mirar al centro, desvanece borde izquierdo */
+  .fighter__img--shao-kan {
+    right: 20%;
+    /* Girar horizontal 
+    transform: scaleX(-1); */
+    height: 100%;
+  }
+
+  .fighter__info--left {
+    position: relative;
+    z-index: 2;
+    padding: 0 2rem 2.5rem 10rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+  .fighter__info--right {
+    position: relative;
+    z-index: 2;
+    padding: 0 0 2.5rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    margin-left: -60px;
+  }
+  .fighter__info--left  { align-items: center; }
+  .fighter__info--right { align-items: center; }
+
+  .fighter__name {
+    font-size: clamp(8rem, 5.8vw, 7rem);
+    letter-spacing: 0.01em;
+    text-shadow: 0 0 50px #000, 0 0 18px #000, 2px 2px 0 rgba(0,0,0,0.6);
+  }
+
+  .fighter__record {
+    display: inline-block;
+    background: #f5c200;
+    width: 12rem;
+    color: #000;
+    font-size: 1.5rem;
+    letter-spacing: 0.1em;
+    text-align: center;
+    border-radius: 4px;
+    margin-top: -2rem;
+  }
+
+  .fighter__flag {
+    width: 82px;
+    height: auto;
+    margin-top: -1rem;
+  }
+
+  /* ── Bracket ─────────────────────────────────── */
+  .bracket {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+  }
+
+  .bracket__row {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+  }
+
+  /* ── Hexágonos ───────────────────────────────── */
+  /*  hex-wrap tiene ancho fijo = unidad base del grid del bracket. */
+  .hex-wrap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    width: 130px;
+    padding-top: 5px; /* espacio sobre el hex para que el retrato sobresalga */
+  }
+
+  /* Capa exterior dorada */
+  .hex {
+    width: 130px;
+    height: 114px;
+    position: relative;
+    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+    background: linear-gradient(90deg, #ffe500 0%, #e38000 48%);
+    rotate: 90deg;
+  }
+
+  /* Retrato fuera del hex: cabeza y torso sobresalen por encima */
+  .hex__portrait {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    top: -10%;
+    transform: translateX(-50%);
+    height: 100%;   /* cabeza + torso únicamente */
+    width: 100%;
+    object-fit: cover;
+    z-index: 2;      /* por encima del hex */
+  }
+
+  .hex__label {
+    margin-top: -2rem;
+    font-size: 2rem;
+    color: #fff;
+    font-style: italic;
+    text-shadow: 1px 1px 5px rgba(0,0,0,1);
+    text-align: center;
+    line-height: 1;
+    position: relative;
+  }
+</style>

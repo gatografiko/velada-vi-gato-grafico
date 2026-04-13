@@ -1,0 +1,105 @@
+---
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+
+interface Props {
+  imageSrc?: string;
+  frames?: number;
+  duration?: string;
+}
+
+const {
+  imageSrc = '/sprite.png',
+  frames = 6,
+  duration = '2.5s'
+} = Astro.props;
+
+const pngPath = fileURLToPath(new URL(`../../public${imageSrc}`, import.meta.url));
+const buf = readFileSync(pngPath);
+const totalWidth  = buf.readUInt32BE(16);
+const totalHeight = buf.readUInt32BE(20);
+
+const frameWidth       = Math.floor(totalWidth / frames);
+const spriteSheetWidth = frameWidth * frames;
+
+const durationMs    = parseFloat(duration) * (duration.endsWith('ms') ? 1 : 1000);
+const frameDuration = `${Math.round(durationMs / frames)}ms`;
+// La mitad del ciclo del sprite → con alternate hace exactamente duration total
+const halfDuration  = `${durationMs / 2}ms`;
+---
+
+<div class="fighter-scene">
+  <div class="fighter-wrapper">
+    <div
+      class="sprite-container"
+      style={{
+        width: `${frameWidth}px`,
+        height: `${totalHeight}px`,
+        backgroundImage: `url(${imageSrc})`,
+        '--animation-total-width': `${spriteSheetWidth}px`,
+        animation: `fighter-sprite-animation ${duration} steps(${frames}) infinite, fighter-frame-blur ${frameDuration} ease-in-out infinite`,
+      }}
+    ></div>
+  </div>
+</div>
+
+<style define:vars={{ halfDuration }}>
+  /* ── Sprite sheet ─────────────────────────────────── */
+  @keyframes fighter-sprite-animation {
+    from { background-position: 0 0; }
+    to   { background-position: calc(-1 * var(--animation-total-width)) 0; }
+  }
+
+  /* ── Motion blur sincronizado con cada frame ──────── */
+  @keyframes fighter-frame-blur {
+    0%, 100% { filter: blur(2px) brightness(1.08); }
+    15%, 85% { filter: blur(0px) brightness(1); }
+  }
+
+  /* ── Float del personaje ──────────────────────────── */
+  /* halfDuration × 2 (alternate) = duration del sprite → sincronizados */
+  @keyframes fighter-float {
+    from { translate: 0 0; }
+    to   { translate: 0 -10px; }
+  }
+
+  /* ── Sombra reactiva al movimiento ───────────────── */
+  /* Se achica y difumina cuando el personaje sube → da físicas reales */
+  @keyframes fighter-shadow {
+    from { scale: 1 1;    opacity: 0.45; filter: blur(4px); }
+    to   { scale: 0.6 1; opacity: 0.15; filter: blur(10px); }
+  }
+
+  .fighter-scene {
+    display: inline-block;
+    position: relative;
+  }
+
+  /* Sombra elíptica bajo el personaje */
+  .fighter-scene::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 15%;
+    width: 70%;
+    height: 18px;
+    background: radial-gradient(ellipse, rgba(0, 0, 0, 0.55) 0%, transparent 70%);
+    animation: fighter-shadow var(--halfDuration) cubic-bezier(0.45, 0, 0.55, 1) alternate infinite;
+    will-change: scale, opacity, filter;
+    transform-origin: center;
+  }
+
+  .fighter-wrapper {
+    display: inline-block;
+    animation: fighter-float var(--halfDuration) cubic-bezier(0.45, 0, 0.55, 1) alternate infinite;
+    will-change: translate;
+  }
+
+  .sprite-container {
+    display: block;
+    overflow: hidden;
+    background-repeat: no-repeat;
+    background-position: 0 0;
+    will-change: filter;
+  }
+</style>

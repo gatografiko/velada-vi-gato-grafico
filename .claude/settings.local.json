@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(npm install:*)",
+      "Bash(cmd /c \"cd /d d:\\\\xampp\\\\htdocs\\\\lavelada && npm install @fontsource/rubik-dirt\")"
+    ]
+  }
+}
