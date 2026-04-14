@@ -2,7 +2,6 @@
 
 Fan-made website del evento de boxeo/streaming **La Velada del Año VI** de Ibai Llanos.
 El diseño y desarrollo solo contempla una idea para la sección de Luchadores de la Velada VI.
-Fecha: **Sábado 11 de julio de 2026 · Santiago Bernabéu, Madrid**.
 
 ## Stack
 
