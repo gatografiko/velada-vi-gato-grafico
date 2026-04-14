@@ -1,4 +1,4 @@
-# La Velada VI — 2026
+# Idea de Sección Luchadores - La Velada VI — 2026
 
 Fan-made website del evento de boxeo/streaming **La Velada del Año VI** de Ibai Llanos.
 El diseño y desarrollo solo contempla una idea para la sección de Luchadores de la Velada VI.
