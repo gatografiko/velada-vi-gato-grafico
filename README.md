@@ -1,6 +1,7 @@
 # La Velada VI — 2026
 
 Fan-made website del evento de boxeo/streaming **La Velada del Año VI** de Ibai Llanos.
+El diseño y desarrollo solo contempla una idea para la sección de Luchadores de la Velada VI.
 Fecha: **Sábado 11 de julio de 2026 · Santiago Bernabéu, Madrid**.
 
 ## Stack
@@ -48,11 +49,10 @@ Fecha: **Sábado 11 de julio de 2026 · Santiago Bernabéu, Madrid**.
 
 ## Características implementadas
 
-- **Arena principal** — layout de 3 columnas (fighter izquierda / bracket / fighter derecha) con imágenes a pantalla completa.
 - **Bracket hexagonal** — hexágonos con gradiente dorado → rojo al hacer hover + glow animado.
-- **Hover interactivo en luchadores** — al pasar el cursor sobre un hexágono se actualizan las imágenes laterales con transición de opacidad; en móvil se actualiza el fighter central.
+- **Hover interactivo en luchadores** — al pasar el cursor sobre un hexágono se vuelve rojo con glow del mismo color y aparece el luchador seleccionado. A la derecha aparece un luchador aleatorio.
 - **Responsive completo** — diseño diferenciado para escritorio (≥ 1024 px) y móvil (< 1024 px) con bracket 2×2 y fighter a pantalla completa.
-- **Tipos TypeScript** — interfaces definidas para fighters, artistas, combates, sponsors y redes sociales.
+- **Tipos TypeScript** — interfaces definidas para fighters.
 - **Despliegue en Vercel** — adaptador SSR configurado.
 
 ## Comandos
